@@ -1,0 +1,110 @@
+github-repo-analyser/
+├── analyser.py
+├── requirements.txt
+└── README.md
+import requests
+import sys
+
+def get_repo_info(owner, repo):
+    url = f"https://api.github.com/repos/{owner}/{repo}"
+    response = requests.get(url)
+    return response.json()
+
+def get_contributors(owner, repo):
+    url = f"https://api.github.com/repos/{owner}/{repo}/contributors"
+    response = requests.get(url)
+    return response.json()
+
+def get_languages(owner, repo):
+    url = f"https://api.github.com/repos/{owner}/{repo}/languages"
+    response = requests.get(url)
+    return response.json()
+
+def main():
+    if len(sys.argv) != 3:
+        print("Usage: python analyser.py <owner> <repository>")
+        sys.exit(1)
+
+    owner, repo = sys.argv[1], sys.argv[2]
+
+    print(f"\n📦 Analyzing GitHub Repository: {owner}/{repo}\n")
+    
+    info = get_repo_info(owner, repo)
+    print("📁 Repository Info:")
+    print(f"Name: {info.get('name')}")
+    print(f"Description: {info.get('description')}")
+    print(f"Stars: {info.get('stargazers_count')}")
+    print(f"Forks: {info.get('forks_count')}")
+    print(f"Watchers: {info.get('watchers_count')}")
+    print(f"Open Issues: {info.get('open_issues_count')}")
+    print(f"Created at: {info.get('created_at')}")
+    print(f"Last updated: {info.get('updated_at')}\n")
+
+    print("👥 Top Contributors:")
+    contributors = get_contributors(owner, repo)
+    for contributor in contributors[:5]:
+        print(f"{contributor['login']} - {contributor['contributions']} contributions")
+
+    print("\n🧑‍💻 Languages Used:")
+    languages = get_languages(owner, repo)
+    for lang, bytes in languages.items():
+        print(f"{lang}: {bytes} bytes")
+
+if __name__ == "__main__":
+    main()
+requests
+# GitHub Repo Analyser
+
+A simple Python CLI tool to analyze any public GitHub repository using the GitHub REST API.
+
+## 🚀 Features
+
+- Fetch repository details: stars, forks, issues, last updated, etc.
+- List top contributors
+- List languages used
+
+## 🛠️ Requirements
+
+- Python 3.x
+- `requests` library (`pip install -r requirements.txt`)
+
+## 🧪 Usage
+
+```bash
+python analyser.py <owner> <repository>
+📦 Analyzing GitHub Repository: torvalds/linux
+
+📁 Repository Info:
+Name: linux
+Description: Linux kernel source tree
+Stars: 158000
+Forks: 50000
+...
+
+👥 Top Contributors:
+torvalds - 1200 contributions
+...
+
+🧑‍💻 Languages Used:
+C: 4000000 bytes
+Assembly: 120000 bytes
+...
+
+---
+
+### ✅ To Upload to GitHub
+
+1. Create a folder `github-repo-analyser`
+2. Save the 3 files:
+   - `analyser.py`
+   - `requirements.txt`
+   - `README.md`
+3. Initialize Git and push:
+
+```bash
+cd github-repo-analyser
+git init
+git add .
+git commit -m "Initial commit: GitHub Repo Analyser"
+git remote add origin https://github.com/YOUR_USERNAME/github-repo-analyser.git
+git push -u origin master
